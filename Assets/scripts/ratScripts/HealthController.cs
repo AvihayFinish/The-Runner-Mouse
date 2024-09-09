@@ -19,11 +19,11 @@ public class HealthController : MonoBehaviour
         CurrentHelath = MaxHealth;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision) {
-    if (collision.collider.tag == triggeringTag && enabled) {
-        TakeDamage(damageAmount);
-    }
-}
+    // private void OnCollisionEnter2D(Collision2D collision) {
+    //     if (collision.collider.tag == triggeringTag && enabled) {
+    //         TakeDamage(damageAmount);
+    //     }
+    // }
 
     private void TakeDamage(float amount){
         CurrentHelath -= amount;
