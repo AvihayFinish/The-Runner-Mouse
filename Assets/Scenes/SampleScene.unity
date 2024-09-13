@@ -320,10 +320,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 931b6e282604ab64e87a369ea0a33087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefab: {fileID: 1714998430}
+  topWallPrefab: {fileID: 1714998430}
+  bottomWallPrefab: {fileID: 1714998430}
   characterSpeed: 3
   screenHeight: 15
-  time_of_the_game: 300
 --- !u!4 &865794541
 Transform:
   m_ObjectHideFlags: 0
@@ -442,16 +442,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7343876335bd4004082c06c5d405f98a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audiosource: {fileID: 0}
-  startPosition: {x: 0, y: 0, z: 0}
-  startSize: {x: 0, y: 0, z: 0}
-  isReturning: 0
-  otherRenderer: {fileID: 0}
-  inputMover: {fileID: 0}
-  initialSpeed: 0
-  potions: []
-  tunnelTops: []
-  tunnelBottoms: []
 --- !u!114 &904628316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -498,6 +488,9 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &904628317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1014,7 +1007,7 @@ GameObject:
   - component: {fileID: 1714998431}
   - component: {fileID: 1714998434}
   - component: {fileID: 1714998433}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square
   m_TagString: Wall
   m_Icon: {fileID: 0}
