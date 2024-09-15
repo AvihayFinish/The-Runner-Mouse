@@ -14,7 +14,7 @@ public class tunelSpawner : MonoBehaviour {
     List<TunelPreporities> preporities;
 
     void Start() {
-        string path = @"C:C:\Users\amitr\OneDrive\שולחן העבודה\FinalProject\finalProject\Assets\tunelProperities.csv";
+        string path = @"C:\Users\eladl\Downloads\finalProject\finalProject\Assets\tunelProperities.csv";
         preporities = ReadCsv(path);
         screenHeight = Camera.main.orthographicSize * 2f;
         GenerateTunnel(preporities);

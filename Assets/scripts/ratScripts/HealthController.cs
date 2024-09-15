@@ -12,6 +12,7 @@ public class HealthController : MonoBehaviour
     [SerializeField] string sceneName;
     [SerializeField] float damageAmount;
     [SerializeField] private Gradient colorGradient;
+    public AudioSource audiosource;
     private float MaxHealth = 3000;
     private float CurrentHelath;
         // Define a layer mask for the walls if needed
@@ -24,6 +25,7 @@ public class HealthController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision) {
     if (collision.collider.tag == triggeringTag && enabled) {
         TakeDamage(damageAmount);
+        audiosource.Play();
         ResetPositionToCenter();
     }
 }
