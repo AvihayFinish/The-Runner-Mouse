@@ -5,6 +5,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
 using System.IO;
+using SFB;
 
 public class tunelSpawner : MonoBehaviour {
     public GameObject topWallPrefab;
@@ -14,100 +15,117 @@ public class tunelSpawner : MonoBehaviour {
     List<TunelPreporities> preporities;
 
     void Start() {
-        string path = @"C:\Users\eladl\Downloads\finalProject\finalProject\Assets\tunelProperities.csv";
-        preporities = ReadCsv(path);
-        screenHeight = Camera.main.orthographicSize * 2f;
-        GenerateTunnel(preporities);
+        // Open the file dialog to select the CSV file (this works in a standalone build)
+        string[] paths = StandaloneFileBrowser.OpenFilePanel("Select CSV file", "", "csv", false);
+
+        // If a file was selected, load the CSV and generate the tunnel
+        if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0])) {
+            preporities = ReadCsv(paths[0]);
+            screenHeight = Camera.main.orthographicSize * 2f;
+            GenerateTunnel(preporities);
+        } else {
+            Debug.LogWarning("No file selected.");
+        }
     }
 
     public void GenerateTunnel(List<TunelPreporities> tunnelData) {
-        float currentXPosition = -4;
-        float previousTargetPosition = tunnelData[0].Target / 100.0f * screenHeight;
+        float currentXPosition = 0;   // Start the tunnel from the origin on the x-axis
+        // Set the initial target position correctly
+        float previousTargetPosition = tunnelData[0].Target / 100.0f * screenHeight;  // Ensure the tunnel starts at the first target position
+        float previousGapSize = tunnelData[0].Width / 100.0f * screenHeight;  // Initial width (percentage of screen height)
 
         for (int index = 0; index < tunnelData.Count; index++) {
             var entry = tunnelData[index];
+            float time = entry.Time;         // Time for the character to pass this segment
+            float target = entry.Target;     // Target position (percentage of screen height)
+            float width = entry.Width;       // Width of the tunnel gap (percentage of screen height)
 
-            // Convert the precentege to decimal number between 0 to 1, and multiply it by the height of the screen to achive the precentege
-            // from the screen that we want.
-            float targetPosition = entry.Target / 100.0f * screenHeight;
-            float gapSize = entry.Width / 100.0f * screenHeight;
+            // Calculate the actual target position and gap size
+            float targetPosition = target / 100.0f * screenHeight;
+            float gapSize = width / 100.0f * screenHeight;
             float halfGap = gapSize / 2.0f;
-            float currentBottomY = previousTargetPosition - halfGap;
-            float currentTopY = previousTargetPosition + halfGap;
-            float nextBottomY = targetPosition - halfGap;
-            float nextTopY = targetPosition + halfGap;
+
+            // Calculate the length of this tunnel segment
+            float segmentLength = Mathf.Round(characterSpeed * time * 1000f) / 1000f;
+            // Debug.Log($"Segment {index}: StartX: {currentXPosition}, Segment Length: {segmentLength}, EndX: {currentXPosition + segmentLength}");
+
+            // Calculate the slope for the rotation (how much the walls tilt)
+            float yDifference = targetPosition - previousTargetPosition;
+
+            // Ensure no slope is applied if the target position is the same as the previous one
+            float slopeAngle = Mathf.Approximately(yDifference, 0) ? 0 : Mathf.Atan2(yDifference, segmentLength) * Mathf.Rad2Deg;
+
+            // Create the bottom and top walls with Z-axis rotation
+            CreateSlantedWall(bottomWallPrefab, currentXPosition, segmentLength, previousTargetPosition - halfGap, targetPosition - halfGap, slopeAngle);
+            CreateSlantedWall(topWallPrefab, currentXPosition, segmentLength, previousTargetPosition + halfGap, targetPosition + halfGap, slopeAngle);
         
-            // Calculate the base segment length based on time and character speed
-            float baseSegmentLength = characterSpeed * entry.Time;
-
-            // Create the slanted walls with the correct diagonal length
-            CreateSlantedWall(bottomWallPrefab, currentXPosition, baseSegmentLength, currentBottomY, nextBottomY);
-            CreateSlantedWall(topWallPrefab, currentXPosition, baseSegmentLength, currentTopY, nextTopY);
-
-            // Handle the transition between intervals
+            // Only add vertical lines if the width changes between consecutive intervals
             if (index < tunnelData.Count - 1) {
                 float nextGapSize = tunnelData[index + 1].Width / 100.0f * screenHeight;
+
+                float currentBottom = targetPosition - halfGap;
+                float currentTop = targetPosition + halfGap;
+
                 float gapDifAbs = Mathf.Abs(gapSize - nextGapSize);
                 float gapDif = gapSize - nextGapSize;
 
                 // Only if there's a difference in the width
                 if (gapDifAbs > 0.01f) {
-                    // if the next width bigger than the current
                     if (gapDif < 0) {
-                        CreateVerticalLine(new Vector3(currentXPosition + baseSegmentLength, nextBottomY, 0), 
-                                        new Vector3(currentXPosition + baseSegmentLength, nextBottomY - (gapDifAbs / 2), 0), gapDif, true);
-                        CreateVerticalLine(new Vector3(currentXPosition + baseSegmentLength, nextTopY, 0), 
-                                        new Vector3(currentXPosition + baseSegmentLength, nextTopY + (gapDifAbs / 2), 0), gapDif, false);
+                        // Calculate where the next interval will start, and create vertical lines to connect
+                        // bottom of current interval to bottom of next interval
+                        CreateVerticalLine(new Vector3(currentXPosition + segmentLength, currentBottom, 0), 
+                                        new Vector3(currentXPosition + segmentLength, currentBottom - (gapDifAbs / 2), 0), gapDif, true);
+                        // top of current interval to top of next interval
+                        CreateVerticalLine(new Vector3(currentXPosition + segmentLength, currentTop, 0), 
+                                        new Vector3(currentXPosition + segmentLength, currentTop + (gapDifAbs / 2), 0), gapDif, false);
                     } else {
-                        CreateVerticalLine(new Vector3(currentXPosition + baseSegmentLength, nextBottomY, 0), 
-                                        new Vector3(currentXPosition + baseSegmentLength, nextBottomY + (gapDifAbs / 2), 0), gapDif, true);
+                        CreateVerticalLine(new Vector3(currentXPosition + segmentLength, currentBottom, 0), 
+                                        new Vector3(currentXPosition + segmentLength, currentBottom + (gapDifAbs / 2), 0), gapDif, true);
 
-                        CreateVerticalLine(new Vector3(currentXPosition + baseSegmentLength, nextTopY, 0), 
-                                        new Vector3(currentXPosition + baseSegmentLength, nextTopY - (gapDifAbs / 2), 0), gapDif, false);
+                        CreateVerticalLine(new Vector3(currentXPosition + segmentLength, currentTop, 0), 
+                                        new Vector3(currentXPosition + segmentLength, currentTop - (gapDifAbs / 2), 0), gapDif, false);
                     }
                 }
             }
 
-            currentXPosition += baseSegmentLength;
-            previousTargetPosition = targetPosition;
+        // Move to the next segment's start position
+        currentXPosition = Mathf.Round((currentXPosition + segmentLength) * 1000f) / 1000f;
+
+        // Update the previous target position and gap size
+        previousTargetPosition = targetPosition;
+        previousGapSize = gapSize;
         }
     }
 
-    private void CreateSlantedWall(GameObject wallPrefab, float startXPosition, float segmentLength, float startYPosition, float endYPosition) {
-        // Calculate the diagonal distance (true length of the slanted wall)
+    private void CreateSlantedWall(GameObject wallPrefab, float startXPosition, float segmentLength, float startYPosition, float endYPosition,
+                                    float slopeAngle) {
         Vector3 startPoint = new(startXPosition, startYPosition, 0);
         Vector3 endPoint = new(startXPosition + segmentLength, endYPosition, 0);
-        float diagonalDistance = Vector3.Distance(startPoint, endPoint);
-
-        // Create a wall at the midpoint between the start and end points
         Vector3 middlePoint = (startPoint + endPoint) / 2;
+        // Debug.Log("the middle: " + middlePoint);
 
-        // Calculate the rotation based on the slope angle (atan2 of the yDifference and segmentLength)
-        float actualSlopeAngle = Mathf.Atan2(endYPosition - startYPosition, segmentLength) * Mathf.Rad2Deg;
+        // Calculate the rotation based on the slope angle
+        Quaternion rotation = Quaternion.Euler(0, 0, slopeAngle);
 
-        // Create the wall with the proper rotation and position
-        GameObject wall = Instantiate(wallPrefab, middlePoint, Quaternion.Euler(0, 0, actualSlopeAngle));
-
-        // Adjust the scale to match the diagonal length (slanted length)
-        wall.transform.localScale = new Vector3(diagonalDistance, 0.1f, 1);  // Set length as the diagonal distance
+        // Create the wall with rotation applied
+        GameObject wall = Instantiate(wallPrefab, middlePoint, rotation);
+        wall.transform.localScale = new Vector3(segmentLength, 0.1f, 1);  // Adjust thickness and length as necessary
     }
 
     // Helper function to create vertical lines
     private void CreateVerticalLine(Vector3 start, Vector3 end, float gapDif, bool bottomOrTop) {
         float lineLength = Vector3.Distance(start, end);
-        // Each side take half from the length of the vertical line. There is two options,  from current y go up or go down.
         Vector3 whereToPlacementPos = new(start.x, start.y + (lineLength / 2), start.z);
         Vector3 whereToPlacementNeg = new(start.x, start.y - (lineLength / 2), start.z);
-        // If the current width bigger than the next, so we need from the bottom to go up and from the top to go down.
         if (gapDif > 0) {
             if (bottomOrTop) {
                 GameObject verticalLine = Instantiate(bottomWallPrefab, whereToPlacementPos, Quaternion.identity);
-                verticalLine.transform.localScale = new Vector3(0.1f, lineLength, 1);  // Adjust thickness and height.
+                verticalLine.transform.localScale = new Vector3(0.1f, lineLength, 1);  // Adjust thickness and height
             } else {
                 GameObject verticalLine = Instantiate(topWallPrefab, whereToPlacementNeg, Quaternion.identity);
                 verticalLine.transform.localScale = new Vector3(0.1f, lineLength, 1);
             }
-        // If the current width smaller than the next, so we need from the bottom to go down and from the top to go up. 
         } else {
             if (bottomOrTop) {
                 GameObject verticalLine = Instantiate(bottomWallPrefab, whereToPlacementNeg, Quaternion.identity);
@@ -120,21 +138,11 @@ public class tunelSpawner : MonoBehaviour {
     }
 
     public static List<TunelPreporities> ReadCsv(string filePath) {
-        List<TunelPreporities> list = new();
-        // Create easy first segment to simplify the start of the game for three seconds.
-        TunelPreporities firstRecord = new()
-        {
-            Time = 3,
-            Target = 0,
-            Width = 40
-        };
-
-        list.Add(firstRecord);
-        using var reader = new StreamReader(filePath);
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture));
-        var records = csv.GetRecords<TunelPreporities>();
-        list.AddRange(records);
-        return list;
+        using (var reader = new StreamReader(filePath))
+        using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture))) {
+            var records = csv.GetRecords<TunelPreporities>();
+            return new List<TunelPreporities>(records);
+        }
     }
 }
 
