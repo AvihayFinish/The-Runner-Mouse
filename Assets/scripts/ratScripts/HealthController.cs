@@ -12,35 +12,42 @@ public class HealthController : MonoBehaviour
     [SerializeField] string sceneName;
     [SerializeField] float damageAmount;
     [SerializeField] private Gradient colorGradient;
+    public AudioSource audiosource;
     private float MaxHealth = 3000;
     private float CurrentHelath;
-        // Define a layer mask for the walls if needed
     [SerializeField] LayerMask wallLayer;
+    [SerializeField] private float invulnerabilityDuration = 3f;
+    [SerializeField] private float blinkInterval = 0.2f; // Time between blinks
+
+    private bool isInvulnerable = false; // Tracks if the rat is invulnerable
+    private SpriteRenderer spriteRenderer;
 
     private void Awake(){
         CurrentHelath = MaxHealth;
+        spriteRenderer = GetComponent<SpriteRenderer>(); // Get the sprite renderer for blinking
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
-    if (collision.collider.tag == triggeringTag && enabled) {
-        TakeDamage(damageAmount);
-        ResetPositionToCenter();
+        if (collision.collider.tag == triggeringTag && !isInvulnerable) { // Prevent damage if invulnerable
+            TakeDamage(damageAmount);
+            audiosource.Play();
+            ResetPositionToCenter();
+            StartCoroutine(EnterInvulnerabilityState());
+        }
     }
-}
 
     private void TakeDamage(float amount){
-        CurrentHelath -= amount;
-        CurrentHelath=Mathf.Clamp(CurrentHelath,0,MaxHealth);
-        if(CurrentHelath ==0){ 
-            if(ThisTheNewHighScore()){
+        if (!isInvulnerable) {
+            CurrentHelath -= amount;
+            CurrentHelath = Mathf.Clamp(CurrentHelath, 0, MaxHealth);
+            if (CurrentHelath == 0) { 
+                if (ThisTheNewHighScore()) {
                     PlayerPrefs.SetString("highscore", SceneManager.GetActiveScene().name);
-                    SceneManager.LoadScene(sceneName);
                 }
-                else{ 
-                    SceneManager.LoadScene(sceneName);
-                }
+                SceneManager.LoadScene(sceneName);
+            }
+            UpdateHealthBar();
         }
-        UpdateHealthBar();
     }
 
     private void UpdateHealthBar(){
@@ -49,18 +56,26 @@ public class HealthController : MonoBehaviour
     }
 
     private bool ThisTheNewHighScore() {
-    string highscore = PlayerPrefs.GetString("highscore");
-    string currentSceneName = SceneManager.GetActiveScene().name;
+        string highscore = PlayerPrefs.GetString("highscore");
+        string currentSceneName = SceneManager.GetActiveScene().name;
 
-    if (highscore.Contains("-") && currentSceneName.Contains("-")) {
-        int highscoreDigit = int.Parse(highscore.Split('-')[1]);
-        int currentSceneDigit = int.Parse(currentSceneName.Split('-')[1]);
+        if (highscore.Contains("-") && currentSceneName.Contains("-")) {
+            int highscoreDigit = int.Parse(highscore.Split('-')[1]);
+            int currentSceneDigit = int.Parse(currentSceneName.Split('-')[1]);
         
-        return currentSceneDigit > highscoreDigit;
+            return currentSceneDigit > highscoreDigit;
+        }
+
+        return false;
     }
 
-    return false;
+    public void AddHealth(float amount)
+{
+    CurrentHelath += amount;
+    CurrentHelath = Mathf.Clamp(CurrentHelath, 0, MaxHealth); // Ensure health doesn't exceed MaxHealth
+    UpdateHealthBar(); // Update the health bar UI
 }
+
 
     // Function to reset the rat's position to the center dynamically using raycasting
     private void ResetPositionToCenter() {
@@ -68,7 +83,6 @@ public class HealthController : MonoBehaviour
         Vector3 upDirection = Vector2.up;
         Vector3 downDirection = Vector2.down;
 
-        // Raycast upward to find the closest object above
         RaycastHit2D hitUp = Physics2D.Raycast(transform.position, upDirection, maxDistance, wallLayer);
         Debug.DrawRay(transform.position, upDirection * maxDistance, Color.red); // Draw the upward ray for debugging
         if (hitUp.collider != null) {
@@ -77,7 +91,6 @@ public class HealthController : MonoBehaviour
             Debug.LogWarning("No object found above the player.");
         }
 
-        // Raycast downward to find the closest object below
         RaycastHit2D hitDown = Physics2D.Raycast(transform.position, downDirection, maxDistance, wallLayer);
         Debug.DrawRay(transform.position, downDirection * maxDistance, Color.green); // Draw the downward ray for debugging
         if (hitDown.collider != null) {
@@ -85,25 +98,34 @@ public class HealthController : MonoBehaviour
         } else {
             Debug.LogWarning("No object found below the player.");
         }
+        
         if (hitUp.collider != null && hitDown.collider != null) {
-            // Calculate the midpoint between the upper and lower objects
             float centerY = (hitUp.point.y + hitDown.point.y) / 2;
-            
-            // Reset the player's position to the calculated center (same x and z, center y)
             transform.position = new Vector3(transform.position.x, centerY, transform.position.z);
             Debug.Log($"Upper hit point: {hitUp.point.y}, Lower hit point: {hitDown.point.y}, Calculated center: {centerY}");
-
         } else if (hitUp.collider != null) {
-            // If only an object above is detected, set to a little below it
-            float offset = 0.5f; // Adjust offset to place the player slightly below the upper object
+            float offset = 0.5f;
             transform.position = new Vector3(transform.position.x, hitUp.point.y - offset, transform.position.z);
         } else if (hitDown.collider != null) {
-            // If only an object below is detected, set to a little above it
-            float offset = 0.5f; // Adjust offset to place the player slightly above the lower object
+            float offset = 0.5f;
             transform.position = new Vector3(transform.position.x, hitDown.point.y + offset, transform.position.z);
         } else {
             Debug.LogWarning("No objects found above or below the player.");
         }
     }
 
+    // Coroutine to enter invulnerability state and handle blinking
+    private IEnumerator EnterInvulnerabilityState() {
+        isInvulnerable = true;
+        float timer = 0f;
+        while (timer < invulnerabilityDuration) {
+            // Toggle the sprite's visibility to create a blinking effect
+            spriteRenderer.enabled = !spriteRenderer.enabled;
+            yield return new WaitForSeconds(blinkInterval);
+            timer += blinkInterval;
+        }
+        // Ensure the sprite is visible at the end
+        spriteRenderer.enabled = true;
+        isInvulnerable = false;
+    }
 }

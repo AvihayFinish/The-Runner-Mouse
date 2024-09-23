@@ -5,7 +5,6 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
 using System.IO;
-using SFB;
 
 public class tunelSpawner : MonoBehaviour {
     public GameObject topWallPrefab;
@@ -15,17 +14,10 @@ public class tunelSpawner : MonoBehaviour {
     List<TunelPreporities> preporities;
 
     void Start() {
-        // Open the file dialog to select the CSV file (this works in a standalone build)
-        string[] paths = StandaloneFileBrowser.OpenFilePanel("Select CSV file", "", "csv", false);
-
-        // If a file was selected, load the CSV and generate the tunnel
-        if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0])) {
-            preporities = ReadCsv(paths[0]);
-            screenHeight = Camera.main.orthographicSize * 2f;
-            GenerateTunnel(preporities);
-        } else {
-            Debug.LogWarning("No file selected.");
-        }
+        string path = @"C:\unityProjects\theBird\finalProject\Assets\tunelProperities.csv";
+        preporities = ReadCsv(path);
+        screenHeight = Camera.main.orthographicSize * 2f;
+        GenerateTunnel(preporities);
     }
 
     public void GenerateTunnel(List<TunelPreporities> tunnelData) {
