@@ -37,20 +37,20 @@ public class GetHighSpeed : MonoBehaviour
     {
         // Double the speed of the camera and background
         if (backgroundScrolling != null)
-            backgroundScrolling.speed *= speedMultiplier;
+            backgroundScrolling.speed /= speedMultiplier;
 
         if (cameraMovement != null)
-            cameraMovement.CameraSpeed *= speedMultiplier;
+            cameraMovement.CameraSpeed /= speedMultiplier;
 
         // Wait for 5 seconds
         yield return new WaitForSeconds(effectDuration);
 
         // Reset the speeds back to their original values
         if (backgroundScrolling != null)
-            backgroundScrolling.speed /= speedMultiplier;
+            backgroundScrolling.speed *= speedMultiplier;
 
         if (cameraMovement != null)
-            cameraMovement.CameraSpeed /= speedMultiplier;
+            cameraMovement.CameraSpeed *= speedMultiplier;
 
         // Finally, deactivate the object fully after the effect finishes
         gameObject.SetActive(false);
