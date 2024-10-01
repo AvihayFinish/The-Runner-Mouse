@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Win.unity
     guid: c02072b8c6fd1ca4bbf2a0d21deb8f92
+  - enabled: 1
+    path: Assets/Scenes/Scene_Rat.unity
+    guid: 030a03d0c1a8796479d424edd69cb78c
   m_configObjects: {}
