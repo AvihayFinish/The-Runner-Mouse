@@ -24,7 +24,7 @@ public class tunelSpawner : MonoBehaviour {
     List<TunelPreporities> preporities;
 
     void Start() {
-        string path = @"C:\unityProjects\theBird\finalProject\Assets\tunelProperities.csv";
+        string path = @"C:\Users\amitr\OneDrive\שולחן העבודה\FinalProject\finalProject\Assets\tunelProperities.csv";
         PauseObject.SetActive(false);
         preporities = ReadCsv(path);
         screenHeight = Camera.main.orthographicSize * 2f;
