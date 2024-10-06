@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using System;
 using System.Globalization;
 using System.IO;
@@ -9,20 +8,16 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 // Enum to determine the input type: either emulation mode or actual Amadeo device.
 public enum InputType
 {
-    EmulationMode,
-    Amadeo,
+    EmulationMode,  // Reads the forces from the file Assets/AmadeoRecords/force_data.txt. The five right numbers in each row represent the forces in the five fingers (of the right hand).
+    Amadeo,         // Reads the forces from Amadeo (if it is connected). If there are no forces from Amadeo, then reads from keyboard (Space = Down).
 }
 
 public class AmadeoClient : MonoBehaviour
 {
-    /* Singleton pattern to ensure only one instance of AmadeoClient exists.
-    // public static AmadeoClient Instance { get; private set; }*/
-
     // Input type to determine if we're in EmulationMode or using the actual Amadeo device.
     [SerializeField] InputType inputType = InputType.Amadeo;
 
@@ -32,27 +27,22 @@ public class AmadeoClient : MonoBehaviour
 
     // Number of data samples to be used for zeroing the forces.
     [SerializeField] private int _zeroFBuffer = 10;
-    public Text zeroForcesText; // A Text UI to display the selected zero forces
 
-
-    private CancellationTokenSource _cancellationTokenSource;
-    private bool _isReceiving = false; // Flag to check if data reception is active.
+    private CancellationTokenSource _cancellationTokenSource;  // See C# documentation to learn about CancellationTokenSource: https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtokensource?view=net-8.0
+    private bool _isReceiving = false;                         // Flag to check if data reception is active.
     private UdpClient _udpClient;
-    private const string EmulationDataFile = "Assets/AmadeoRecords/force_data.txt"; // File path for emulation data.
-
-    private const int DefaultPortNumber = 4444; // Default port number if not set manually.
+    private const string EmulationDataFile = "Assets/AmadeoRecords/force_data.txt"; // Path to file where each row represents a sample of 10 forces (one per finger).
 
     private IPEndPoint _remoteEndPoint; // End point for the UDP connection.
 
     private float[] _forces = new float[5]; // Array to store the force values for five fingers.
     private readonly float[] _zeroForces = new float[5]; // Array to store zeroed force values for five fingers.
-    [SerializeField] private bool _isLeftHand = false; // Flag to check if we're handling data for the left hand.
+    [SerializeField] public bool _isLeftHand = false; // Flag to check if we're handling data for the left hand.
 
     // Event triggered whenever force values are updated.
     public event Action<float[]> OnForcesUpdated;
 
-    // Initialization method called on start.
-    public void Start()
+    private void Start()
     {
         try
         {
@@ -68,8 +58,6 @@ public class AmadeoClient : MonoBehaviour
 
         _cancellationTokenSource = new CancellationTokenSource();
         Debug.Log("AmadeoClient started");
-        // Data reception would normally start here, but it's commented out for now.
-        // StartReceiveData();
     }
 
     // Method to start zeroing the forces (calibration step).
@@ -152,7 +140,7 @@ public class AmadeoClient : MonoBehaviour
                 }
 
                 index = (index + 1) % lines.Length;
-                await Task.Delay(10, cancellationToken); // Delay between data readings.
+                await Task.Delay(10, cancellationToken); // Delay between data readings. Emulates the delay between samples.
             }
 
             Debug.Log("HandleIncomingDataEmu: Stopped receiving data.");
@@ -327,49 +315,6 @@ public class AmadeoClient : MonoBehaviour
         for (int i = 0; i < sums.Length; i++)
         {
             _zeroForces[i] = sums[i] / count;
-        }   
-
-        // Convert the array to a string
-        forcesString(_zeroForces);
-    }
-
-    private void forcesString(float[] zeroForces)
-    {  
-        Dictionary<string, float> forcesDict;
-
-        // Names for each finger (keys)
-        string[] leftFingerNames = { "thumb_left", "indexFinger_left", "middleFinger_left", "ringFinger_left", "littleFinger_left" };
-        string[] rightFingerNames = { "thumb_right", "indexFinger_right", "middleFinger_right", "ringFinger_right", "littleFinger_right" };
-
-        // Convert to key-value pairs
-        if(_isLeftHand)
-            forcesDict = ConvertToDictionary(leftFingerNames, zeroForces);
-        else
-            forcesDict = ConvertToDictionary(rightFingerNames, zeroForces);
-
-        // Convert the dictionary to a readable string format
-        string displayString = "";
-        foreach (var pair in forcesDict)
-        {
-            displayString += $"{pair.Key}: {pair.Value}\n";
         }
-
-        // Set the text of the UI element
-        zeroForcesText.text = displayString;
-    }
-
-      private Dictionary<string, float> ConvertToDictionary(string[] keys, float[] values)
-    {
-        Dictionary<string, float> dict = new Dictionary<string, float>();
-
-        // Ensure that the number of keys matches the number of values
-        int length = Mathf.Min(keys.Length, values.Length);
-
-        for (int i = 0; i < length; i++)
-        {
-            dict[keys[i]] = values[i];
-        }
-
-        return dict;
     }
 }
