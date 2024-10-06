@@ -28,7 +28,7 @@ public class HealthController : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.collider.tag == triggeringTag && !isInvulnerable) { // Prevent damage if invulnerable
+        if (collision.collider.CompareTag(triggeringTag) && !isInvulnerable) { // Prevent damage if invulnerable
             TakeDamage(damageAmount);
             audiosource.Play();
             ResetPositionToCenter();

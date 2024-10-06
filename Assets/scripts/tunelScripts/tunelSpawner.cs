@@ -9,7 +9,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine.SceneManagement;
 
-public class tunelSpawner : MonoBehaviour {
+public class TunelSpawner : MonoBehaviour {
     public GameObject topWallPrefab;
     public GameObject bottomWallPrefab; 
     public GameObject bonusOne;
@@ -20,13 +20,21 @@ public class tunelSpawner : MonoBehaviour {
     public GameObject PauseObject;
     public TextMeshProUGUI messageText;
     public float characterSpeed;  
-    public float screenHeight;
-    List<TunelPreporities> preporities;
+    private float screenHeight;
+    public List<TunelPreporities> preporities;
+    public Retalation retalation;
+
+    void Awake() {
+        retalation.enabled = false;
+    }
 
     void Start() {
-        string path = @"C:\Users\amitr\OneDrive\שולחן העבודה\FinalProject\finalProject\Assets\tunelProperities.csv";
+        string path = PlayerPrefs.GetString("filePath");
+        characterSpeed = PlayerPrefs.GetFloat("characterSpeed");
+        Debug.Log("characterSpeed" + characterSpeed);
         PauseObject.SetActive(false);
         preporities = ReadCsv(path);
+        retalation.enabled = true;
         screenHeight = Camera.main.orthographicSize * 2f;
         GenerateTunnel(preporities);
     }
@@ -124,7 +132,7 @@ public class tunelSpawner : MonoBehaviour {
 
                 endTunnel.transform.localScale = new Vector3(baseSegmentLength / 12, gapSize / 2, 1);
                 BoxCollider2D box = endTunnel.GetComponent<BoxCollider2D>();
-                box.size = new Vector2(baseSegmentLength / 5, gapSize / 2);
+                box.size = new Vector2(baseSegmentLength / 12, gapSize / 2);
                 Instantiate(endTunnel, endTunnelPosition, Quaternion.Euler(0, 0, slopeAngle)); // Apply the combined rotation.
             }
 

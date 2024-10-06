@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
     "speed": 15.0,
     "filePath": "",
+=======
+    "speed": 7.0,
+    "filePath": "C:\\unityProjects\\theBird\\finalProject\\Assets\\tunelProperities.csv",
+>>>>>>> fe1bd2f11f9146fa86b83d0251fca8216398ae05
     "whichFinger": "middleFinger_right",
     "zeroForces": []
 }
