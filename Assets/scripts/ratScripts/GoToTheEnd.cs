@@ -7,9 +7,12 @@ public class GoToTheEnd : MonoBehaviour {
     // [SerializeField] Animator transitionanimator;
     public AudioSource audiosource;
     private InputMover otherinputMover;
+    public Retalation forScore;
     private void OnTriggerEnter2D(Collider2D other) {
-        
-        if (other.tag == "Rat") {
+        if (other.CompareTag("Rat")) {
+            Debug.Log("Current Score: " + forScore.score);
+            PlayerPrefs.SetFloat("theScore", forScore.score);
+            PlayerPrefs.Save();
             StartCoroutine(LoadLevel(other.GetComponent<InputMover>()));
         }
     }

@@ -25,7 +25,7 @@ public class SaveSettings : MonoBehaviour
         return "None";
     }
 
-    // Method to save the data as JSON
+    // Method to save the data and pass them forward
     public void SaveSettingsToJson()
     {
         SettingsData data = new SettingsData();
@@ -33,19 +33,13 @@ public class SaveSettings : MonoBehaviour
         data.filePath = filePath.text;
         data.whichFinger = GetActiveToggle();
         data.zeroForces = ConvertDictionaryToList(ConvertStringToDictionary(zeroForces.text)); // Convert dictionary to list
+        PlayerPrefs.SetFloat("characterSpeed", data.speed);
+        PlayerPrefs.SetString("whichFinger", data.whichFinger);
+        PlayerPrefs.SetString("filePath", data.filePath);
+        PlayerPrefs.Save();
 
+        Debug.Log("Save the data with PlayPrefs");
         Debug.Log("Settings saved eroForces: " + data.zeroForces);
-
-        string json = JsonUtility.ToJson(data, true);
-
-        string scriptDirectory = Application.dataPath + "/Scripts"; // Assuming your scripts are in the "Scripts" folder
-        string jsonFilePath = System.IO.Path.Combine(scriptDirectory, "settings.json");
-
-        // Save your file to this path
-        System.IO.File.WriteAllText(jsonFilePath, json);
-
-
-        Debug.Log("Settings saved to JSON: " + json);
     }
 
     public List<KeyValuePair> ConvertDictionaryToList(Dictionary<string, float> dictionary)

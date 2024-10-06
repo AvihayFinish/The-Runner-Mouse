@@ -1,27 +1,6 @@
 {
-    "speed": 15.0,
-    "filePath": "C:\\Users\\amitr\\OneDrive\\שולחן העבודה\\FinalProject\\finalProject\\Assets\\tunelProperities.csv",
-    "whichFinger": "thumb_right",
-    "zeroForces": [
-        {
-            "Key": "thumb_right",
-            "Value": 0.0
-        },
-        {
-            "Key": "indexFinger_right",
-            "Value": 0.0
-        },
-        {
-            "Key": "middleFinger_right",
-            "Value": 0.0
-        },
-        {
-            "Key": "ringFinger_right",
-            "Value": -0.6250001192092896
-        },
-        {
-            "Key": "littleFinger_right",
-            "Value": 0.0
-        }
-    ]
+    "speed": 7.0,
+    "filePath": "C:\\unityProjects\\theBird\\finalProject\\Assets\\tunelProperities.csv",
+    "whichFinger": "middleFinger_right",
+    "zeroForces": []
 }
