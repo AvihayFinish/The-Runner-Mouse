@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
 
 // Enum to determine the input type: either emulation mode or actual Amadeo device.
 public enum InputType
@@ -18,6 +19,9 @@ public enum InputType
 
 public class AmadeoClient : MonoBehaviour
 {
+
+    public static AmadeoClient Instance { get; private set; } // Singleton instance
+
     // Input type to determine if we're in EmulationMode or using the actual Amadeo device.
     [SerializeField] InputType inputType = InputType.Amadeo;
 
@@ -28,7 +32,7 @@ public class AmadeoClient : MonoBehaviour
     // Number of data samples to be used for zeroing the forces.
     [SerializeField] private int _zeroFBuffer = 10;
 
-    private CancellationTokenSource _cancellationTokenSource;  // See C# documentation to learn about CancellationTokenSource: https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtokensource?view=net-8.0
+    private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();  
     private bool _isReceiving = false;                         // Flag to check if data reception is active.
     private UdpClient _udpClient;
     private const string EmulationDataFile = "Assets/AmadeoRecords/force_data.txt"; // Path to file where each row represents a sample of 10 forces (one per finger).
@@ -42,22 +46,37 @@ public class AmadeoClient : MonoBehaviour
     // Event triggered whenever force values are updated.
     public event Action<float[]> OnForcesUpdated;
 
+        private void Awake()
+    {
+        // Check if the instance is already set and ensure it's a singleton
+        if (Instance == null)
+        {
+            Instance = this;
+            try
+            {
+                //Set up the UDP client for receiving data.
+                // _udpClient = new UdpClient(_port);
+                // _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to initialize UdpClient: {ex.Message}");
+                return;
+            }
+
+            DontDestroyOnLoad(gameObject); // Persist between scenes
+        }
+        else
+        {
+            Destroy(gameObject); // Destroy the duplicate
+        }
+        
+        Debug.Log("AmadeoClient started");
+
+    }
+
     private void Start()
     {
-        try
-        {
-            // Set up the UDP client for receiving data.
-            _udpClient = new UdpClient(_port);
-            _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"Failed to initialize UdpClient: {ex.Message}");
-            return;
-        }
-
-        _cancellationTokenSource = new CancellationTokenSource();
-        Debug.Log("AmadeoClient started");
     }
 
     // Method to start zeroing the forces (calibration step).
@@ -178,6 +197,7 @@ public class AmadeoClient : MonoBehaviour
         }
 
         Debug.Log("Forces after processing: " + string.Join(", ", _forces));
+        
         OnForcesUpdated?.Invoke(_forces); // Trigger the event to update forces.
     }
 
@@ -187,11 +207,19 @@ public class AmadeoClient : MonoBehaviour
         return data.Replace("<Amadeo>", "").Replace("</Amadeo>", "");
     }
 
-    // Called when the object is destroyed, to stop receiving data and clean up resources.
+    //Called when the object is destroyed, to stop receiving data and clean up resources.
     private void OnDestroy()
     {
-        Debug.Log("Called OnDestroy() in AmadeoClient...");
-        StopClientConnection();
+        Scene currentScene = SceneManager.GetActiveScene();
+        // Output the name of the current scene
+        Debug.Log("Current Scene: " + currentScene.name);
+
+        // Check if the object is in a specific scene
+        if (currentScene.name == "Start Game") 
+        {
+            Debug.Log("Called OnDestroy() in AmadeoClient...");
+            StopClientConnection();
+        }
     }
 
     // Called when the application quits, to stop receiving data and clean up resources.

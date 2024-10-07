@@ -4,8 +4,12 @@ using UnityEngine.InputSystem;
 
 public class InputMover : MonoBehaviour {
     [Tooltip("Speed of movement, in meters per second")]
-    [SerializeField] float speed;
+    [SerializeField]public float speed;
     [SerializeField] InputAction moveVertical = new InputAction(type: InputActionType.Button);
+     // ----- Amadeo Device Connection -----
+    [Header("Amadeo Device Connection")]
+    public bool notGetForcesFromAmadeo = true;  // Flag to check if Amadeo device is connected or using keyboard
+    
 
 
     public void SetSpeed(float newSpeed) {
@@ -17,7 +21,8 @@ public class InputMover : MonoBehaviour {
     }
 
     void OnEnable() {
-        moveVertical.Enable();
+        if(notGetForcesFromAmadeo)
+            moveVertical.Enable();
     }
 
     void OnDisable() {
@@ -25,8 +30,11 @@ public class InputMover : MonoBehaviour {
     }
 
     void Update() {
+        if(notGetForcesFromAmadeo)
+        {
             float vertical = moveVertical.ReadValue<float>();
             Vector3 movementVector = new Vector3(0, vertical, 0) * speed * Time.deltaTime;
             transform.position += movementVector;
+        }
     }
 }
