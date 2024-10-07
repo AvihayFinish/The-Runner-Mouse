@@ -11,55 +11,95 @@ public class getEventFromAmadeoClientDiver : MonoBehaviour
     // === Amadeo Client & Movement Parameters ===
     [Header("Amadeo Client")]
     [SerializeField] private AmadeoClient amadeoClient;  // Reference to the AmadeoClient script
-    [SerializeField] float factor_forces = 1f;  // Multiplier for forces received from the Amadeo device
+    [SerializeField] float factor_forces = 100f;  // Multiplier for forces received from the Amadeo device
 
     // === Internal State ===
-    private Rigidbody2D rb;  // Rigidbody component for physics-based movement
-    private PlayerMovement pm;  // Reference to the PlayerMovement script
-    private int indexForce = 3;  // Index of the selected finger (force to be used) *****from the settings file*****
+    private InputMover im;  // Reference to the PlayerMovement script
+    private int indexForce;  // Index of the selected finger (force to be used)
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();  // Get the Rigidbody component attached to the GameObject
-        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;  // Set collision detection mode to Continuous for better accuracy
-        pm = GetComponent<PlayerMovement>();  // Get the PlayerMovement script component
+        int indexForce = ParseStringToInt(PlayerPrefs.GetString("whichFinger"));
+        Debug.Log("whichFinger" + indexForce);
+        im = GetComponent<InputMover>();  // Get the PlayerMovement script component
     }
 
     //Subscribe to the OnForcesUpdated event when the object is enabled
     private void OnEnable()
-    {
-        if (amadeoClient != null)
-        {
-            amadeoClient.OnForcesUpdated += HandleForcesUpdated;
-        }
+    {   
+        AmadeoClient.Instance.OnForcesUpdated += HandleForcesUpdated;  
     }
 
     // Unsubscribe from the OnForcesUpdated event when the object is disabled
     private void OnDisable()
-    {
-        if (amadeoClient != null)
-        {
-            amadeoClient.OnForcesUpdated -= HandleForcesUpdated;
-        }
+    { 
+        AmadeoClient.Instance.OnForcesUpdated -= HandleForcesUpdated;
     }
 
 
     //Handles the forces received from the Amadeo device
-    private void HandleForcesUpdated(float[] forces)
+    public void HandleForcesUpdated(float[] forces)
     {
-        Debug.Log("indexForce" + indexForce);
+        Debug.Log("indexForce111" + indexForce);
         Debug.Log("forces" + forces);
 
         // Ensure valid forces are received
         if (forces != null && forces.Length > 0)
         {
-            pm.notGetForcesFromAmadeo = false;  // Enable force reception from Amadeo
+            im.notGetForcesFromAmadeo = false;  // Enable force reception from Amadeo
 
-            float vertical = forces[indexForce];
-            Vector3 movementVector = new Vector3(0, vertical, 0) * pm.speed * Time.deltaTime;
+            float vertical = forces[1];
+            Vector3 movementVector = new Vector3(0, vertical, 0) * im.speed * factor_forces * Time.deltaTime;
             transform.position += movementVector;
 
-            pm.notGetForcesFromAmadeo = true;  // Disable force reception after applying movement
+            im.notGetForcesFromAmadeo = true;  // Disable force reception after applying movement
         }
-    }    
+    }  
+
+    public enum RightFingersEnum
+    {
+        thumb_right = 4,
+        indexFinger_right = 3,
+        middleFinger_right = 2,
+        ringFinger_right = 1,
+        littleFinger_right = 0
+    }  
+
+    public enum LeftFingersEnum
+    {
+        littleFinger_left = 0,
+        ringFinger_left = 1,
+        middleFinger_left = 2,
+        indexFinger_left = 3,
+        thumb_left = 4
+    } 
+
+    private static int ParseStringToInt(string fingerString)
+    {
+        switch (fingerString)
+        {
+            case "thumb_right":
+                return 0;
+            case "indexFinger_right":
+                return 1;
+            case "middleFinger_right":
+                return 2;
+            case "ringFinger_right":
+                return 3;
+            case "littleFinger_right":
+                return 4;
+            case "littleFinger_left":
+                return 0;
+            case "ringFinger_left":
+                return 1;
+            case "middleFinger_left":
+                return 2;
+            case "indexFinger_left":
+                return 3;
+            case "thumb_left":
+                return 4;
+            default:
+                throw new ArgumentException($"Invalid finger string: {fingerString}");
+        }
+    }
 }
