@@ -6,6 +6,6 @@ public class AmadeoClient_1 : MonoBehaviour
 
     public void start()
     {
-        amadeoClient.StartZeroF();
+        AmadeoClient.Instance.StartZeroF();
     }
 }
