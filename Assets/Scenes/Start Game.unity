@@ -1679,6 +1679,7 @@ GameObject:
   - component: {fileID: 904628316}
   - component: {fileID: 904628321}
   - component: {fileID: 904628322}
+  - component: {fileID: 904628323}
   m_Layer: 0
   m_Name: Rat
   m_TagString: Rat
@@ -1852,7 +1853,7 @@ MonoBehaviour:
       m_Action: Move Vertical
       m_Flags: 8
     m_Flags: 0
-  notGetForcesFromAmadeo: 1
+  notGetForcesFromAmadeo: 0
 --- !u!114 &904628318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1965,7 +1966,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amadeoClient: {fileID: 2443409566296400359, guid: 43713425e56828e439d8c0f8b80f0e3b, type: 3}
-  factor_forces: 1
+  factor_forces: 10
+--- !u!114 &904628323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904628312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab39fcf13c3a7ba42ae12b20a04c800a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amadeoClient: {fileID: 2443409566296400359, guid: 43713425e56828e439d8c0f8b80f0e3b, type: 3}
 --- !u!1 &961607652
 GameObject:
   m_ObjectHideFlags: 0
@@ -2000,7 +2014,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -196.22003, y: 88.15}
+  m_AnchoredPosition: {x: -196.22, y: 88.15}
   m_SizeDelta: {x: -534, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &961607654
@@ -2050,7 +2064,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 19.55
+  m_fontSize: 41.9
   m_fontSizeBase: 47.23
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2638,51 +2652,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: -1
   m_TargetDisplay: 0
---- !u!1 &1069740672
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1069740674}
-  - component: {fileID: 1069740675}
-  m_Layer: 0
-  m_Name: AmadeoClient_2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1069740674
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1069740672}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1069740675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1069740672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab39fcf13c3a7ba42ae12b20a04c800a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  amadeoClient: {fileID: 2443409566296400359, guid: 43713425e56828e439d8c0f8b80f0e3b, type: 3}
 --- !u!1 &1120436514
 GameObject:
   m_ObjectHideFlags: 0
@@ -4045,7 +4014,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 221, y: -97.999985}
+  m_AnchoredPosition: {x: 221, y: -98}
   m_SizeDelta: {x: -574, y: -271}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1686875906
@@ -4829,4 +4798,3 @@ SceneRoots:
   - {fileID: 1736682794}
   - {fileID: 1694549445}
   - {fileID: 1223032779}
-  - {fileID: 1069740674}

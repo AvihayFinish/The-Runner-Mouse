@@ -19,8 +19,6 @@ public class getEventFromAmadeoClientDiver : MonoBehaviour
 
     void Start()
     {
-        int indexForce = ParseStringToInt(PlayerPrefs.GetString("whichFinger"));
-        Debug.Log("whichFinger" + indexForce);
         im = GetComponent<InputMover>();  // Get the PlayerMovement script component
     }
 
@@ -39,16 +37,15 @@ public class getEventFromAmadeoClientDiver : MonoBehaviour
 
     //Handles the forces received from the Amadeo device
     public void HandleForcesUpdated(float[] forces)
-    {
-        Debug.Log("indexForce111" + indexForce);
-        Debug.Log("forces" + forces);
-
+    {   
+        int indexForce = ParseStringToInt(PlayerPrefs.GetString("whichFinger"));
+        Debug.Log("indexForce" + indexForce);
         // Ensure valid forces are received
         if (forces != null && forces.Length > 0)
         {
             im.notGetForcesFromAmadeo = false;  // Enable force reception from Amadeo
 
-            float vertical = forces[1];
+            float vertical = forces[indexForce];
             Vector3 movementVector = new Vector3(0, vertical, 0) * im.speed * factor_forces * Time.deltaTime;
             transform.position += movementVector;
 
@@ -56,48 +53,30 @@ public class getEventFromAmadeoClientDiver : MonoBehaviour
         }
     }  
 
-    public enum RightFingersEnum
-    {
-        thumb_right = 4,
-        indexFinger_right = 3,
-        middleFinger_right = 2,
-        ringFinger_right = 1,
-        littleFinger_right = 0
-    }  
-
-    public enum LeftFingersEnum
-    {
-        littleFinger_left = 0,
-        ringFinger_left = 1,
-        middleFinger_left = 2,
-        indexFinger_left = 3,
-        thumb_left = 4
-    } 
-
     private static int ParseStringToInt(string fingerString)
     {
         switch (fingerString)
         {
             case "thumb_right":
-                return 0;
+                return 4;
             case "indexFinger_right":
-                return 1;
+                return 3;
             case "middleFinger_right":
                 return 2;
             case "ringFinger_right":
-                return 3;
+                return 1;
             case "littleFinger_right":
                 return 4;
             case "littleFinger_left":
-                return 0;
+                return 4;
             case "ringFinger_left":
-                return 1;
+                return 3;
             case "middleFinger_left":
                 return 2;
             case "indexFinger_left":
-                return 3;
+                return 1;
             case "thumb_left":
-                return 4;
+                return 0;
             default:
                 throw new ArgumentException($"Invalid finger string: {fingerString}");
         }
