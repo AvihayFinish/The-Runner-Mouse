@@ -3011,7 +3011,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.09375, y: -47.000122}
+  m_AnchoredPosition: {x: -2.0932617, y: -47.000122}
   m_SizeDelta: {x: -181.77075, y: -205.30469}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1044806339
@@ -5181,6 +5181,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2443409566296400359, guid: 43713425e56828e439d8c0f8b80f0e3b, type: 3}
+      propertyPath: _isLeftHand
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2713847348291232944, guid: 43713425e56828e439d8c0f8b80f0e3b, type: 3}
       propertyPath: m_Name
       value: AmadeoClient

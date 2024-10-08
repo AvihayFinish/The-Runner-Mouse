@@ -44,14 +44,14 @@ public class Retalation : MonoBehaviour {
         float deltaY = theRat.transform.position.y - centerY;
 
         if (theRat.transform.position.y == centerY) {
-            Debug.Log("update score: " + 10);
+            // Debug.Log("update score: " + 10);
             score += 10;
         }
         else if (MathF.Abs(deltaY) < 0.2f) {
             // Ensure deltaY is not too close to zero before taking Log10
             float safeDeltaY = MathF.Max(MathF.Abs(deltaY), 0.0001f); // Set a minimum threshold to avoid Log10(0) or near zero
             float logValue = MathF.Abs(MathF.Log10(safeDeltaY));
-            Debug.Log("update score: " + logValue);
+            // Debug.Log("update score: " + logValue);
             score += logValue;
         }
     }
