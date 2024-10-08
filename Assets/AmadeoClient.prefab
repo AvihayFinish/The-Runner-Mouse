@@ -47,4 +47,4 @@ MonoBehaviour:
   inputType: 0
   _port: 4444
   _zeroFBuffer: 10
-  _isLeftHand: 0
+  _isLeftHand: 1

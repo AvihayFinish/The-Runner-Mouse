@@ -1695,7 +1695,7 @@ Transform:
   m_GameObject: {fileID: 904628312}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.52, y: -0.89, z: -0.2722279}
+  m_LocalPosition: {x: -9.59, y: -0.89, z: -0.2722279}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1852,7 +1852,7 @@ MonoBehaviour:
       m_Action: Move Vertical
       m_Flags: 8
     m_Flags: 0
-  notGetForcesFromAmadeo: 1
+  notGetForcesFromAmadeo: 0
 --- !u!114 &904628318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1965,7 +1965,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amadeoClient: {fileID: 2443409566296400359, guid: 43713425e56828e439d8c0f8b80f0e3b, type: 3}
-  factor_forces: 10
+  factor_forces: 1000
+  idleUpwardSpeed: 0.1
+  verticalTolerance: 0.1
 --- !u!1 &961607652
 GameObject:
   m_ObjectHideFlags: 0
@@ -2050,7 +2052,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 41.9
+  m_fontSize: 44.75
   m_fontSizeBase: 47.23
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4000,7 +4002,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 221, y: -98}
+  m_AnchoredPosition: {x: 221, y: -98.000015}
   m_SizeDelta: {x: -574, y: -271}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1686875906
