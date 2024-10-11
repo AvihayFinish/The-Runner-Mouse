@@ -7,8 +7,6 @@ public class FileExplorer : MonoBehaviour
 {
     public Text filePathText; // A Text UI to display the selected file path
     private string filePath;
-    // List<TunelPreporities> preporities;
-
 
     // Method to open the file explorer and select a CSV file
     public void OpenFileExplorer()
@@ -21,8 +19,6 @@ public class FileExplorer : MonoBehaviour
         if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0])) {
             filePath = paths[0]; // Save the file path
             filePathText.text = filePath; // Display the file path in the UI
-            // preporities = ReadCsv(paths[0]);
-            // screenHeight = Camera.main.orthographicSize * 2f;
             Debug.Log("Selected file path: " + filePath);
         } else {
             Debug.LogWarning("No file selected.");
