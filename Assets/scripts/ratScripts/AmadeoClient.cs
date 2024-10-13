@@ -31,6 +31,7 @@ public class AmadeoClient : MonoBehaviour
 
     // Number of data samples to be used for zeroing the forces.
     [SerializeField] private int _zeroFBuffer = 10;
+    [SerializeField] public bool isAmadeo = false;
 
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();  
     private bool _isReceiving = false;                         // Flag to check if data reception is active.
@@ -54,9 +55,12 @@ public class AmadeoClient : MonoBehaviour
             Instance = this;
             try
             {
-                //Set up the UDP client for receiving data.
-                // _udpClient = new UdpClient(_port);
-                // _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                if(inputType == InputType.Amadeo && isAmadeo)
+                {
+                    //Set up the UDP client for receiving data.
+                    _udpClient = new UdpClient(_port);
+                    _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                }
             }
             catch (Exception ex)
             {

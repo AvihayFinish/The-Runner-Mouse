@@ -10,7 +10,6 @@ public class getEventFromAmadeoClientDiver : MonoBehaviour
 {
     // === Amadeo Client & Movement Parameters ===
     [Header("Amadeo Client")]
-    [SerializeField] private AmadeoClient amadeoClient;  // Reference to the AmadeoClient script
     [SerializeField] float factor_forces = 10f;  // Multiplier for forces received from the Amadeo device
     [SerializeField] public float idleUpwardSpeed;  // Speed for upward movement when no input is detected
 
@@ -33,13 +32,15 @@ public class getEventFromAmadeoClientDiver : MonoBehaviour
     //Subscribe to the OnForcesUpdated event when the object is enabled
     private void OnEnable()
     {   
-        AmadeoClient.Instance.OnForcesUpdated += HandleForcesUpdated;  
+        if(AmadeoClient.Instance != null)
+            AmadeoClient.Instance.OnForcesUpdated += HandleForcesUpdated;  
     }
 
     // Unsubscribe from the OnForcesUpdated event when the object is disabled
     private void OnDisable()
     { 
-        AmadeoClient.Instance.OnForcesUpdated -= HandleForcesUpdated;
+        if(AmadeoClient.Instance != null)
+            AmadeoClient.Instance.OnForcesUpdated -= HandleForcesUpdated;
     }
 
 
