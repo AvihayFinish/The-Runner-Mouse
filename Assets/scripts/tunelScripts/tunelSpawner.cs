@@ -254,30 +254,10 @@ public class TunelSpawner : MonoBehaviour {
                     PauseGameWithMessage(message);
                 }
 
-                if (Mathf.Abs(proper.Target) + proper.Width  > 100f) {
-                    bool negative = proper.Target < 0;
-                    
-                    // Take a litlle from Target
-                    proper.Target = 100f - (Mathf.Abs(proper.Target) + proper.Width - 100f);
-                    /*  
-                    If the combined target and width exceed the screen boundaries, we want the tunnel to be exactly at the top or bottom of 
-                    the screen. Additionally, to simplify things, the target percentage is measured from half of the screen, so that 
-                    0% represents the center of the screen. On the other hand, the width percentage is measured from the entire screen.
-                    In such a case, even after adjusting the target, the tunnel can still exceed the screen bounds because the 
-                    Width is a percentage of something larger than the target's. Therefore, we want to satisfy the equation:
-                    Target / 100 * HalfScreenHeight + Width / 100 * ScreenHeight = HalfScreenHeight.
-                    After some algebra, we derive that: 
-                    Width = 50 - Target / 2 
-                    */
-                    proper.Width = (int)(50 - (proper.Target / 2));
-                    // while (proper.Width <= 10) {
-                    //     proper.Width += 5;
-                    //     proper.Target -= 5;
-                    // } 
-                    Debug.Log("Target: " + proper.Target + " Width: " + proper.Width);
-                    if (negative) {
-                        proper.Target *= -1;
-                    }
+                if (Mathf.Abs(proper.Target) + (proper.Width / 2)  > 100f) {
+                    string message = $"In the CSV file the target and the width in line {count} exceeds from the screen bounds, the calculate need to be: " +
+                                    "(target + width / 2) <= 100. when you press OK, the game return to the main menu, fix the CSV file and load him again.";
+                    PauseGameWithMessage(message);
                 }
 
                 float rand = Random.Range(0f, 1f);
