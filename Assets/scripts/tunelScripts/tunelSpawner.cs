@@ -33,6 +33,16 @@ public class TunelSpawner : MonoBehaviour {
         characterSpeed = PlayerPrefs.GetFloat("characterSpeed");
         Debug.Log("characterSpeed" + characterSpeed);
         PauseObject.SetActive(false);
+        if (characterSpeed <= 0) {
+            string message = $"You put illegal speed to the mouse, the speed must be greater than 0, when you press OK, the game " +
+                            "return to the main menu, fix the speed of the character to positive number.";
+            PauseGameWithMessage(message);
+        }
+        if (path == "") {
+            string message = $"You dont choose a csv file,, when you press OK, the game return to the main menu" +
+                            ", press the button \"Choose File CSV\" and choose legal csv file.";
+            PauseGameWithMessage(message);
+        }
         preporities = ReadCsv(path);
         retalation.enabled = true;
         screenHeight = Camera.main.orthographicSize * 2f;
@@ -51,15 +61,12 @@ public class TunelSpawner : MonoBehaviour {
 
             // Calculate the target position relative to the middle of the screen
             float targetPosition = entry.Target / 100f * halfScreenHeight;
-
-            // Clamp the position to ensure it stays within the screen bounds
-            targetPosition = Mathf.Clamp(targetPosition, -halfScreenHeight, halfScreenHeight);
             float gapSize = entry.Width / 100.0f * screenHeight;
             float halfGap = gapSize / 2.0f;
-            float currentBottomY = previousTargetPosition - halfGap;
-            float currentTopY = previousTargetPosition + halfGap;
-            float nextBottomY = targetPosition - halfGap;
-            float nextTopY = targetPosition + halfGap;
+            float currentBottomY = Mathf.Max(previousTargetPosition - halfGap, -halfScreenHeight);;
+            float currentTopY = Mathf.Min(previousTargetPosition + halfGap, halfScreenHeight);
+            float nextBottomY = Mathf.Max(targetPosition - halfGap, -halfScreenHeight);
+            float nextTopY = Mathf.Min(targetPosition + halfGap, halfScreenHeight);
         
             // Calculate the base segment length based on time and character speed
             float baseSegmentLength = characterSpeed * entry.Time;
@@ -71,6 +78,7 @@ public class TunelSpawner : MonoBehaviour {
             // Handle the transition between intervals
             if (index < tunnelData.Count - 1) {
                 float nextGapSize = tunnelData[index + 1].Width / 100.0f * screenHeight;
+                float nextHalfGap = nextGapSize / 2;
                 float gapDifAbs = Mathf.Abs(gapSize - nextGapSize);
                 float gapDif = gapSize - nextGapSize;
 
@@ -213,6 +221,13 @@ public class TunelSpawner : MonoBehaviour {
             using var csv = new CsvReader(reader, config);
             csv.Read();
             csv.ReadHeader();
+            var headers = csv.Context.Reader.HeaderRecord;
+            // Check if the csv file have exactly 3 columns.
+            if (headers.Length != 3) {
+                string message = $"The csv file had more or less than 3 columns, this format is illegal, when you press OK, the game " +
+                                "return to the main menu, fix the CSV file and load him again.";
+                    PauseGameWithMessage(message);
+            }
             float count = 0;
 
             while (csv.Read()) {
@@ -233,12 +248,33 @@ public class TunelSpawner : MonoBehaviour {
                                     "return to the main menu, fix the CSV file and load him again.";
                     PauseGameWithMessage(message);
                 }
+                if (proper.Time <= 0) {
+                    string message = $"In the CSV file the time in line {count} smaller or equal to 0, when you press OK, the game " +
+                                    "return to the main menu, fix the CSV file and load him again.";
+                    PauseGameWithMessage(message);
+                }
 
-                if (Mathf.Abs(proper.Target) + (proper.Width / 2) > 95.5f) {
+                if (Mathf.Abs(proper.Target) + proper.Width  > 100f) {
                     bool negative = proper.Target < 0;
-
-                    proper.Target = 95.5f - (Mathf.Abs(proper.Target) + proper.Width - 95.5f);
                     
+                    // Take a litlle from Target
+                    proper.Target = 100f - (Mathf.Abs(proper.Target) + proper.Width - 100f);
+                    /*  
+                    If the combined target and width exceed the screen boundaries, we want the tunnel to be exactly at the top or bottom of 
+                    the screen. Additionally, to simplify things, the target percentage is measured from half of the screen, so that 
+                    0% represents the center of the screen. On the other hand, the width percentage is measured from the entire screen.
+                    In such a case, even after adjusting the target, the tunnel can still exceed the screen bounds because the 
+                    Width is a percentage of something larger than the target's. Therefore, we want to satisfy the equation:
+                    Target / 100 * HalfScreenHeight + Width / 100 * ScreenHeight = HalfScreenHeight.
+                    After some algebra, we derive that: 
+                    Width = 50 - Target / 2 
+                    */
+                    proper.Width = (int)(50 - (proper.Target / 2));
+                    // while (proper.Width <= 10) {
+                    //     proper.Width += 5;
+                    //     proper.Target -= 5;
+                    // } 
+                    Debug.Log("Target: " + proper.Target + " Width: " + proper.Width);
                     if (negative) {
                         proper.Target *= -1;
                     }
