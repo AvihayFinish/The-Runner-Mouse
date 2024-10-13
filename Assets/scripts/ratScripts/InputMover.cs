@@ -7,8 +7,8 @@ public class InputMover : MonoBehaviour {
     [SerializeField]public float speed;
     [SerializeField] InputAction moveVertical = new InputAction(type: InputActionType.Button);
      // ----- Amadeo Device Connection -----
-    [Header("Amadeo Device Connection")]
-    public bool notGetForcesFromAmadeo = true;  // Flag to check if Amadeo device is connected or using keyboard
+
+    internal bool notGetForcesFromAmadeo = true;  // Flag to check if Amadeo device is connected or using keyboard
     
 
 
@@ -26,7 +26,8 @@ public class InputMover : MonoBehaviour {
     }
 
     void OnDisable() {
-        moveVertical.Disable();
+        if(notGetForcesFromAmadeo)
+            moveVertical.Disable();
     }
 
     void Update() {
