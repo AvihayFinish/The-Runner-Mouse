@@ -165,7 +165,7 @@ public class TunelSpawner : MonoBehaviour {
         GameObject wall = Instantiate(wallPrefab, middlePoint, Quaternion.Euler(0, 0, actualSlopeAngle));
 
         // Adjust the scale to match the diagonal length (slanted length)
-        wall.transform.localScale = new Vector3(diagonalDistance, 0.1f, 1);  // Set length as the diagonal distance
+        wall.transform.localScale = new Vector3(diagonalDistance, 0.3f, 1);  // Set length as the diagonal distance
     }
 
     // Helper function to create vertical lines
@@ -178,19 +178,19 @@ public class TunelSpawner : MonoBehaviour {
         if (gapDif > 0) {
             if (bottomOrTop) {
                 GameObject verticalLine = Instantiate(bottomWallPrefab, whereToPlacementPos, Quaternion.identity);
-                verticalLine.transform.localScale = new Vector3(0.1f, lineLength, 1);  // Adjust thickness and height.
+                verticalLine.transform.localScale = new Vector3(0.3f, lineLength, 1);  // Adjust thickness and height.
             } else {
                 GameObject verticalLine = Instantiate(topWallPrefab, whereToPlacementNeg, Quaternion.identity);
-                verticalLine.transform.localScale = new Vector3(0.1f, lineLength, 1);
+                verticalLine.transform.localScale = new Vector3(0.3f, lineLength, 1);
             }
         // If the current width smaller than the next, so we need from the bottom to go down and from the top to go up. 
         } else {
             if (bottomOrTop) {
                 GameObject verticalLine = Instantiate(bottomWallPrefab, whereToPlacementNeg, Quaternion.identity);
-                verticalLine.transform.localScale = new Vector3(0.1f, lineLength, 1);
+                verticalLine.transform.localScale = new Vector3(0.3f, lineLength, 1);
             } else {
                 GameObject verticalLine = Instantiate(topWallPrefab, whereToPlacementPos, Quaternion.identity);
-                verticalLine.transform.localScale = new Vector3(0.1f, lineLength, 1);
+                verticalLine.transform.localScale = new Vector3(0.3f, lineLength, 1);
             }
         }
     }

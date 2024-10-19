@@ -6,7 +6,6 @@ public class GetHighSpeed : MonoBehaviour
     public AudioSource audiosource;
     public float speedMultiplier = 2f;
     public float effectDuration = 5f;
-
     private Scrolling backgroundScrolling;
     private CameraMovment cameraMovement;
     private SpriteRenderer spriteRenderer; // Reference to the sprite
