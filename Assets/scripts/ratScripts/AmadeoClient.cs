@@ -200,7 +200,7 @@ public class AmadeoClient : MonoBehaviour
             _forces = _forces.Reverse().ToArray();
         }
 
-        Debug.Log("Forces after processing: " + string.Join(", ", _forces));
+        //Debug.Log("Forces after processing: " + string.Join(", ", _forces));
         
         OnForcesUpdated?.Invoke(_forces); // Trigger the event to update forces.
     }

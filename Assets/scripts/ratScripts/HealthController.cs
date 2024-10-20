@@ -27,17 +27,27 @@ public class HealthController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>(); // Get the sprite renderer for blinking
     }
 
-    private void OnCollisionEnter2D(Collision2D collision) {
-    if (collision.collider.CompareTag(triggeringTag) && !isInvulnerable) {
-        TakeDamage(damageAmount);
-        audiosource.Play();
-        ResetPositionToCenter();
-        StartCoroutine(EnterInvulnerabilityState(invulnerabilityDuration)); // Pass duration here
-    }
-}
+
+       private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.CompareTag(triggeringTag))
+            {
+                if (!isInvulnerable)
+                {
+                    TakeDamage(damageAmount);
+                    audiosource.Play();
+                    ResetPositionToCenter();
+                    StartCoroutine(EnterInvulnerabilityState(invulnerabilityDuration)); // Pass duration here
+                }
+                else
+                {
+                    ResetPositionToCenter();
+                }
+            }
+        }
 
 
-    private void TakeDamage(float amount){
+        private void TakeDamage(float amount){
         if (!isInvulnerable) {
             CurrentHelath -= amount;
             CurrentHelath = Mathf.Clamp(CurrentHelath, 0, MaxHealth);

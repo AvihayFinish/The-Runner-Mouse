@@ -8,8 +8,9 @@ public class InputMover : MonoBehaviour {
     [SerializeField] InputAction moveVertical = new InputAction(type: InputActionType.Button);
      // ----- Amadeo Device Connection -----
 
-    internal bool notGetForcesFromAmadeo = true;  // Flag to check if Amadeo device is connected or using keyboard
-    
+    internal bool notGetForcesFromAmadeo = false;  // Flag to check if Amadeo device is connected or using keyboard
+
+
 
 
     public void SetSpeed(float newSpeed) {

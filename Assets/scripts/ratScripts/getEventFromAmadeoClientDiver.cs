@@ -10,7 +10,7 @@ public class getEventFromAmadeoClientDiver : MonoBehaviour
 {
     // === Amadeo Client & Movement Parameters ===
     [Header("Amadeo Client")]
-    [SerializeField] float factor_forces = 10f;  // Multiplier for forces received from the Amadeo device
+    [SerializeField] float factor_forces = 1f;  // Multiplier for forces received from the Amadeo device
     [SerializeField] public float idleUpwardSpeed;  // Speed for upward movement when no input is detected
 
 
@@ -46,7 +46,7 @@ public class getEventFromAmadeoClientDiver : MonoBehaviour
 
     //Handles the forces received from the Amadeo device
     public void HandleForcesUpdated(float[] forces)
-    {   
+    {
         int indexForce = ParseStringToInt(PlayerPrefs.GetString("whichFinger"));
         // Ensure valid forces are received
         if (forces != null && forces.Length > 0)
@@ -65,32 +65,33 @@ public class getEventFromAmadeoClientDiver : MonoBehaviour
             }
             else
             {
-                verticalMovementSpeed = Mathf.Sign(newVerticalPosition - currentVerticalPosition) * im.speed; // Move up or down
+                verticalMovementSpeed = Mathf.Sign(newVerticalPosition - currentVerticalPosition) * im.speed;  // Move up or down
             }
 
-            // Create a velocity vector using the vertical speed
+            // Only update the y-axis velocity; set x-axis velocity to 0
             Vector2 targetVelocity = new Vector2(0, verticalMovementSpeed);
 
-            // Apply the calculated velocity to the 2D Rigidbody
-            rb.velocity = targetVelocity;
+            rb.velocity = targetVelocity;  // Apply the vertical velocity to the Rigidbody2D
+
             im.notGetForcesFromAmadeo = true;  // Disable force reception after applying movement
         }
-    }  
+    }
+
 
     private static int ParseStringToInt(string fingerString)
     {
         switch (fingerString)
         {
             case "thumb_right":
-                return 0;
+                return 4;
             case "indexFinger_right":
-                return 1;
+                return 3;
             case "middleFinger_right":
                 return 2;
             case "ringFinger_right":
-                return 3;
+                return 1;
             case "littleFinger_right":
-                return 4;
+                return 0;
             case "littleFinger_left":
                 return 4;
             case "ringFinger_left":
