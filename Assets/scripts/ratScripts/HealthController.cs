@@ -28,13 +28,14 @@ public class HealthController : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.collider.CompareTag(triggeringTag) && !isInvulnerable) { // Prevent damage if invulnerable
-            TakeDamage(damageAmount);
-            audiosource.Play();
-            ResetPositionToCenter();
-            StartCoroutine(EnterInvulnerabilityState());
-        }
+    if (collision.collider.CompareTag(triggeringTag) && !isInvulnerable) {
+        TakeDamage(damageAmount);
+        audiosource.Play();
+        ResetPositionToCenter();
+        StartCoroutine(EnterInvulnerabilityState(invulnerabilityDuration)); // Pass duration here
     }
+}
+
 
     private void TakeDamage(float amount){
         if (!isInvulnerable) {
@@ -115,17 +116,20 @@ public class HealthController : MonoBehaviour
     }
 
     // Coroutine to enter invulnerability state and handle blinking
-    private IEnumerator EnterInvulnerabilityState() {
-        isInvulnerable = true;
-        float timer = 0f;
-        while (timer < invulnerabilityDuration) {
-            // Toggle the sprite's visibility to create a blinking effect
-            spriteRenderer.enabled = !spriteRenderer.enabled;
-            yield return new WaitForSeconds(blinkInterval);
-            timer += blinkInterval;
-        }
-        // Ensure the sprite is visible at the end
-        spriteRenderer.enabled = true;
-        isInvulnerable = false;
+    public IEnumerator EnterInvulnerabilityState(float duration)
+{
+    isInvulnerable = true; // מסמן שהעכבר בלתי פגיע
+    float timer = 0f;
+    while (timer < duration)
+    {
+        // מחליף את הנראות של הספראיט כדי ליצור אפקט מהבהב
+        spriteRenderer.enabled = !spriteRenderer.enabled;
+        yield return new WaitForSeconds(blinkInterval);
+        timer += blinkInterval; // מעדכן את הספירה
     }
+    // מבטיח שהספראיט יהיה נראה בסוף
+    spriteRenderer.enabled = true;
+    isInvulnerable = false; // מסמן שהעכבר חוזר להיות פגיע
+}
+
 }
