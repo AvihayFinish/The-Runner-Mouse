@@ -18,7 +18,7 @@ To encourage patients to engage with the machine and complete their tasks, we de
 
 # Get the Projet:
 To download and work on the project, first install [Unity 2022.3.16f1](https://unity.com/releases/editor/whats-new/2022.3.16). Then, click the green "Code" button on the repository page and copy the URL provided. <br>
-Next, create a new directory on your computer and open it in the command prompt. Run the command: "git clone <copied-URL>. <br>
+Next, create a new directory on your computer and open it in the command prompt. Run the command: `git clone <copied-URL>`. <br>
 After the project is cloned, open **Unity Hub**, click the arrow next to the "Add" button, and select "Add project from disk". <br>
 Navigate to the directory where you cloned the project and select it. Finally, open the project from Unity Hub, and Unity will launch the project. <br>
 
