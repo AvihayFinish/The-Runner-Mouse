@@ -23,7 +23,7 @@ After the project is cloned, open **Unity Hub**, click the arrow next to the "Ad
 Navigate to the directory where you cloned the project and select it. Finally, open the project from Unity Hub, and Unity will launch the project. <br>
 
 # Important Note:
-To fully understand the game and its components, please read this [article]([URL](https://github.com/AvihayFinish/The-Runner-Mouse/blob/main/The%20Runner%20Mouse%20Article.pdf)). The article contains all the information you need.
+To fully understand the game and its components, please read this [article](https://github.com/AvihayFinish/The-Runner-Mouse/blob/main/The%20Runner%20Mouse%20Article.pdf). The article contains all the information you need.
 
 # Development Mode:
 As mentioned earlier, the game is developed for the Amadeo machine, and the control of the mouse (the in-game character) is adjusted for this device. <br>
